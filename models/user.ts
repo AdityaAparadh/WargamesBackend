@@ -4,6 +4,7 @@ interface IUser {
   username: string;
   password: string;
   currentLevel: number;
+  currentQuizLevel: number;
   lastSubmission: Date;
 }
 
@@ -21,6 +22,10 @@ const userSchema = new mongoose.Schema<IUser>({
     required: true,
   },
   currentLevel: {
+    type: Number,
+    required: true,
+  },
+  currentQuizLevel: {
     type: Number,
     required: true,
   },

@@ -13,7 +13,8 @@ export interface IJWTPayload {
 /**
  * Middleware to check if user is authorized
  */
-const Auth = (req: Request, res: Response, next: NextFunction) => {
+// const Auth = (req: Request, res: Response, next: NextFunction) => {
+const Auth = (req: Request, res: Response) => {
   const token = req.headers.authorization;
   if (!token) {
     return res.status(401).send({ message: "Unauthorized" });

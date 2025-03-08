@@ -4,11 +4,11 @@ import authMiddleware from "../middleware/authMiddleware";
 
 const infoRouter = Router();
 
-infoRouter.get("/leaderboard", (req, res, next) => {
+infoRouter.get("/leaderboard", (req, res) => {
   /**
    * @todo Fix this mess
    */
-  authMiddleware(req, res, next); // Hack: Not supposed to be used like this ?? WTF
+  authMiddleware(req, res); // Hack: Not supposed to be used like this ?? WTF
   getLeaderboard(req, res);
 });
 

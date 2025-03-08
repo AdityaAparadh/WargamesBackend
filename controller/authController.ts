@@ -30,6 +30,7 @@ const SignUp = async (req: Request, res: Response) => {
       username,
       password,
       currentLevel: 1,
+      currentQuizLevel: 1,
       lastSubmission: new Date(),
     });
     await newUser.save();
