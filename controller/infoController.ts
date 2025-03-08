@@ -89,11 +89,17 @@ export const getStatus = async (req: Request, res: Response) => {
       const regularLevelScore = allLevels
         .filter((lvl) => lvl.level < user.currentLevel)
         .reduce((sum, lvl) => sum + lvl.score, 0);
+
       const quizLevelScore = allQuizLevels
         ? allQuizLevels
-            .filter((lvl) => lvl.level < user.currentQuizLevel)
+            .filter(
+              (lvl) =>
+                lvl.level < user.currentQuizLevel &&
+                user.correctQuizLevels.includes(lvl.level),
+            )
             .reduce((sum, lvl) => sum + lvl.score, 0)
         : 0;
+
       const totalScore = regularLevelScore + quizLevelScore;
 
       return {

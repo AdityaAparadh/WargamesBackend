@@ -31,8 +31,10 @@ const SignUp = async (req: Request, res: Response) => {
       password,
       currentLevel: 1,
       currentQuizLevel: 1,
+      correctQuizLevels: [],
       lastSubmission: new Date(),
     });
+
     await newUser.save();
 
     return res.status(201).send({ message: "User created successfully" });

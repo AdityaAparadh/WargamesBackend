@@ -75,6 +75,7 @@ const submitFlag = async (req: Request, res: Response) => {
 
     if (findLevel.flag == req.body.flag) {
       currentUser.currentLevel = currentLevel + 1;
+      currentUser.lastSubmission = new Date();
       await currentUser.save();
       return res.status(200).send({
         message: "Correct Flag. Yay!",
@@ -103,14 +104,18 @@ const submitQuiz = async (req: Request, res: Response) => {
     });
 
     currentUser.currentQuizLevel += 1;
-    await currentUser.save();
+    currentUser.lastSubmission = new Date();
 
     if (findQuizLevel?.answer == req.body.answer) {
+      currentUser.lastSubmission = new Date();
+      currentUser.correctQuizLevels.push(currentUser.currentQuizLevel - 1);
+      await currentUser.save();
       return res.status(200).send({
         message: "Correct Answer. Yay!",
       });
     } else {
-      return res.status(401).send({ message: "Incorrect Answer" });
+      await currentUser.save();
+      return res.status(400).send({ message: "Incorrect Answer" });
     }
   } catch (error) {
     console.log(error);

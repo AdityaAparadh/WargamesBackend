@@ -8,7 +8,6 @@ infoRouter.get("/leaderboard", (req, res) => {
   /**
    * @todo Fix this mess
    */
-  authMiddleware(req, res); // Hack: Not supposed to be used like this ?? WTF
   getLeaderboard(req, res);
 });
 infoRouter.get("/status", (req, res) => {
