@@ -21,12 +21,18 @@ const SignUp = async (req: Request, res: Response) => {
       return res.status(400).send({ message: "User already exists" });
     }
 
+    /**
+     * @todo Implement bcrypt for password hashing
+     * Right now it is kept plaintext for testing
+     */
+
     const newUser = new User({
       username,
       password,
       currentLevel: 1,
       lastSubmission: new Date(),
     });
+    await newUser.save();
 
     return res.status(201).send({ message: "User created successfully" });
   } catch (err) {
@@ -47,6 +53,10 @@ const Login = async (req: Request, res: Response) => {
         .send({ message: "Both Username and Password are required" });
     }
 
+    /**
+     * @todo convert to bcrypt
+     */
+
     const findUser = await User.findOne({ username });
     if (!findUser) {
       return res.status(404).send({ message: "User not found" });
@@ -55,10 +65,12 @@ const Login = async (req: Request, res: Response) => {
       return res.status(401).send({ message: "Invalid Credentials" });
     }
     const tokenData: IJWTPayload = { username };
-    const token = jwt.sign(tokenData, config.JWT_SECRET as string, {});
+    const token = jwt.sign(tokenData, config.JWT_SECRET, {});
     return res.status(200).send({ message: "Login Successful", token });
   } catch (err) {
     console.log(err);
     res.status(500).send({ message: "Internal Server Error" });
   }
 };
+
+export { SignUp, Login };

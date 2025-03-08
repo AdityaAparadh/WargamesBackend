@@ -13,36 +13,31 @@ export interface IJWTPayload {
 /**
  * Middleware to check if user is authorized
  */
-const authMiddleware = async (
-  req: Request,
-  next: NextFunction,
-  res: Response,
-) => {
+const Auth = (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization;
   if (!token) {
     return res.status(401).send({ message: "Unauthorized" });
   }
-  let decodedToken: IJWTPayload;
+
   try {
-    decodedToken = jwt.verify(
+    const decodedToken = jwt.verify(
       token as string,
       config.JWT_SECRET as string,
     ) as IJWTPayload;
 
     if (decodedToken) {
       req.body.username = decodedToken.username;
-      next();
+      // next();
+      return;
     } else {
-      res.status(401).send({ message: "Unauthorized" });
+      return res.status(401).send({ message: "Unauthorized" });
     }
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
-      res.status(401).send({ message: "Token Expired" });
-      return;
+      return res.status(401).send({ message: "Token Expired" });
     }
-    res.status(401).send({ message: "Invalid Token" });
-    return;
+    return res.status(401).send({ message: "Invalid Token" });
   }
 };
 
-export default authMiddleware;
+export default Auth;

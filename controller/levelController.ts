@@ -60,11 +60,15 @@ const submitFlag = async (req: Request, res: Response) => {
       currentUser.currentLevel = currentLevel + 1;
       await currentUser.save();
       return res.status(200).send({
-        message: "Flag is correct! You have been promoted to the next level.",
+        message: "Correct Flag. Yay!",
       });
+    } else {
+      return res.status(401).send({ message: "Incorrect Flag" });
     }
   } catch (err) {
     console.log(err);
     res.status(500).send({ message: "Internal Server Error" });
   }
 };
+
+export { getLevel, submitFlag };
