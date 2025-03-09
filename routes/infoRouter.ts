@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getLeaderboard, getStatus } from "../controller/infoController";
 import authMiddleware from "../middleware/authMiddleware";
+import { generateLeaderboard } from "../controller/levelController";
 
 const infoRouter = Router();
 
@@ -19,3 +20,11 @@ infoRouter.get("/status", (req, res) => {
 });
 
 export default infoRouter;
+
+infoRouter.get("/updateLeaderboard",(req, res)=>{
+    /**
+   * @todo Fix this mess
+   */
+  authMiddleware(req, res);
+  generateLeaderboard(req, res);
+})

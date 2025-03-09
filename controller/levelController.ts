@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import User from "../models/user";
 import Level, { type ILevel } from "../models/level";
 import quizLevel from "../models/quizLevel";
+import leaderboardItem from "../models/leaderboardItem";
 
 /**
  * Controller to return scripts to setup, run and cleanup level
@@ -123,4 +124,47 @@ const submitQuiz = async (req: Request, res: Response) => {
   }
 };
 
-export { getLevel, getQuizLevel, submitFlag, submitQuiz };
+const generateLeaderboard = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find({});
+    const levels = await Level.find({});
+    const quizLevels = await quizLevel.find({});
+
+    await Promise.all(
+      users.map(async (user) => {
+        let totalScore = 0;
+
+        for (const level of user.correctQuizLevels) {
+          const quizLevel = quizLevels.find((quizLevel) => quizLevel.level === level);
+          if (quizLevel) {
+            totalScore += quizLevel.score;
+          }
+        }
+
+        for (let i = 0; i < user.currentLevel - 1; i++) {
+          const level = levels[i];
+          if (level) {
+            totalScore += level.score;
+          }
+        }
+
+        const item = await leaderboardItem.findOneAndUpdate(
+          { username: user.username },
+          { username: user.username, score: totalScore, lastSubmission: user.lastSubmission },
+          { new: true, upsert: true }
+        );
+
+        return item;
+      })
+    );
+
+    return res.status(200).send({ message: "Leaderboard updated successfully"});
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send({ message: 'Internal Server Error' });
+  }
+};
+
+
+
+export { getLevel, getQuizLevel, submitFlag, submitQuiz, generateLeaderboard };
