@@ -21,6 +21,7 @@ const getLevel = async (req: Request, res: Response) => {
       return res.status(404).send({ message: "Level not found" });
     }
     return res.status(200).send({
+      levelName: findLevel.levelName,
       preload: findLevel.preload,
       run: findLevel.run,
       cleanup: findLevel.cleanup,
@@ -82,7 +83,7 @@ const submitFlag = async (req: Request, res: Response) => {
         message: "Correct Flag. Yay!",
       });
     } else {
-      return res.status(401).send({ message: "Incorrect Flag" });
+      return res.status(400).send({ message: "Incorrect Flag" });
     }
   } catch (err) {
     console.log(err);
@@ -135,7 +136,9 @@ const generateLeaderboard = async (req: Request, res: Response) => {
         let totalScore = 0;
 
         for (const level of user.correctQuizLevels) {
-          const quizLevel = quizLevels.find((quizLevel) => quizLevel.level === level);
+          const quizLevel = quizLevels.find(
+            (quizLevel) => quizLevel.level === level,
+          );
           if (quizLevel) {
             totalScore += quizLevel.score;
           }
@@ -150,21 +153,25 @@ const generateLeaderboard = async (req: Request, res: Response) => {
 
         const item = await leaderboardItem.findOneAndUpdate(
           { username: user.username },
-          { username: user.username, score: totalScore, lastSubmission: user.lastSubmission },
-          { new: true, upsert: true }
+          {
+            username: user.username,
+            score: totalScore,
+            lastSubmission: user.lastSubmission,
+          },
+          { new: true, upsert: true },
         );
 
         return item;
-      })
+      }),
     );
 
-    return res.status(200).send({ message: "Leaderboard updated successfully"});
+    return res
+      .status(200)
+      .send({ message: "Leaderboard updated successfully" });
   } catch (err) {
     console.error(err);
-    return res.status(500).send({ message: 'Internal Server Error' });
+    return res.status(500).send({ message: "Internal Server Error" });
   }
 };
-
-
 
 export { getLevel, getQuizLevel, submitFlag, submitQuiz, generateLeaderboard };

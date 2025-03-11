@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
 export interface ILevel {
+  levelName: string;
+
   level: number;
   /**
    * Script to be run to setup a level, including pulling/building of images
@@ -29,6 +31,10 @@ export interface ILevel {
  * Level Schema
  */
 const levelSchema = new mongoose.Schema<ILevel>({
+  levelName: {
+    type: String,
+    required: true,
+  },
   level: {
     type: Number,
     required: true,
