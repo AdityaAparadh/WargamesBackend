@@ -75,7 +75,7 @@ const submitFlag = async (req: Request, res: Response) => {
       return res.status(404).send({ message: "Level not found" });
     }
 
-    if (findLevel.flag == req.body.flag) {
+    if (req.body.flag.includes(findLevel.flag)) {
       currentUser.currentLevel = currentLevel + 1;
       currentUser.lastSubmission = new Date();
       await currentUser.save();
